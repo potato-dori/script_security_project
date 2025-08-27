@@ -18,6 +18,29 @@ def get_next_row(sheet):
 
 
 
+def login_fail(protocol, username, wrong_password):
+    if protocol == "Console" or "Telnet":
+        for i in range(2):
+            time.sleep(1)
+            crt.Screen.Send(f"{username}\r")
+            time.sleep(1)
+            crt.Screen.Send(f"{wrong_password}\r")
+            crt.Screen.WaitForString("Username")
+
+    elif protocol == "SSH":
+        for i in range(2):
+            time.sleep(1)
+            crt.Screen.Send(f"{wrong_password}\r")
+            crt.Screen.WaitForString("Password")
+
+def login_success(protocol, username, right_password):
+    if protocol in ["Console", "Telnet"]:
+        crt.Screen.Send(f"{username}\r")
+        time.sleep(1)
+
+    crt.Screen.Send(f"{right_password}\r")
+    crt.Screen.WaitForString(f"{device}>")
+
 
 def start(protocol, ip, username, password):
     if protocol == "Console":
@@ -25,24 +48,13 @@ def start(protocol, ip, username, password):
         time.sleep(2)
         crt.Screen.Send("\n")
         crt.Screen.WaitForString("Username")
+
     elif protocol == "Telnet":
         crt.Session.Connect(f"/TELNET {ip}")
-        for i in range(2):
-            time.sleep(1)
-            crt.Screen.Send(f"{username}\r")
-            time.sleep(1)
-            crt.Screen.Send(f"{password}\r")
-            crt.Screen.WaitForString("Username")
-    # crt.Screen.WaitForString(f"{device}>")
-    # crt.Screen.Send("enable\n")  
+
     if protocol == "SSH":
         crt.Session.Connect(f"/SSH2 {username}@{ip} /PASSWORD {password}")
-        for i in range(2):
-            time.sleep(1)
-            crt.Screen.Send(f"{password}\r")
-            crt.Screen.WaitForString("Password")
-        #crt.Screen.WaitForString(f"{device}>")
-        #crt.Screen.Send("enable\n")
+
 
 
 
@@ -106,20 +118,36 @@ def judge(judge_line):
 
     
 
-test_name = "TEST5_noAuthFailureReason_SSH"
-
+#test_name = "TEST5_noAuthFailureReason_Console"
 #start("Console", "192.168.73.2", "admin", "Changeme1357!!")
-#start("Telnet", "192.168.73.2", "admin", "Changeme1357!!")
-start("SSH", "192.168.73.2", "admin", "Changeme1357!!")
-
-read_all()
-time.sleep(3)
+#login_fail("Console", "admin", "Changeme1357!!")
+#read_all()
+#time.sleep(3)
 #judge("Username: admin")
-judge("Password:")
+#time.sleep(3)
+#login_success("Console", "admin", "Changeme1357!")
+
+#test_name = "TEST5_noAuthFailureReason_Telnet"
+#start("Telnet", "192.168.73.2", "admin", "Changeme1357!!")
+#login_fail("Telnet", "admin", "Changeme1357!!")
+#read_all()
+#time.sleep(3)
+#judge("Username: admin")
+#time.sleep(3)
+#login_success("Telnet", "admin", "Changeme1357!")
+
+#test_name = "TEST5_noAuthFailureReason_SSH"
+#start("SSH", "192.168.73.2", "admin", "Changeme1357!!")
+#login_fail("SSH", "admin", "Changeme1357!!")
+#read_all()
+#time.sleep(3)
+#judge("Password:")
+#time.sleep(3)
+#login_success("SSH", "admin", "Changeme1357!")
 
 
-time.sleep(3)
-# crt.Screen.Send("admin\r")
-time.sleep(1)
-crt.Screen.Send("Changeme1357!\r")
-crt.Screen.WaitForString(f"{device}>")
+
+
+
+
+
