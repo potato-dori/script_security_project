@@ -1,9 +1,10 @@
 import time
 from openpyxl import load_workbook
 
+
 device = "HL7301"
 
-file_path = r"C:\Users\ehh74_0i1\OneDrive\바탕 화면\2025 업무\_2025.04.03_보안기능시험_자동화\securitytest_result.xlsx"
+file_path = r"C:\Users\ehh74_0i1\Desktop\한은희 백업\2025 업무\_2025.04.03_보안기능시험_자동화\securitytest_result.xlsx"
 save_path = file_path
 
 wb = load_workbook(file_path)
@@ -119,7 +120,7 @@ def judge(judge_line):
     
 
 #test_name = "TEST5_noAuthFailureReason_Console"
-#start("Console", "192.168.73.2", "admin", "Changeme1357!!")
+#start("Console", "192.168.73.2", "admin", "changeme@!")
 #login_fail("Console", "admin", "Changeme1357!!")
 #read_all()
 #time.sleep(3)
@@ -128,7 +129,7 @@ def judge(judge_line):
 #login_success("Console", "admin", "Changeme1357!")
 
 #test_name = "TEST5_noAuthFailureReason_Telnet"
-#start("Telnet", "192.168.73.2", "admin", "Changeme1357!!")
+start("Telnet", "172.25.44.24", "admin", "changeme@!")
 #login_fail("Telnet", "admin", "Changeme1357!!")
 #read_all()
 #time.sleep(3)

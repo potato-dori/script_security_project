@@ -4,8 +4,8 @@ import mss
 import os
 from openpyxl import load_workbook
 
-device = "HL7301"
-file_path = r"C:\Users\ehh74_0i1\OneDrive\바탕 화면\2025 업무\_2025.04.03_보안기능시험_자동화\securitytest_result.xlsx"
+device = "SWITCH"
+file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
 
 wb = load_workbook(file_path)
@@ -34,7 +34,6 @@ def read_all():
         line = crt.Screen.Get(row, 1, row, num_cols).rstrip()
         if line.strip() != "":
             all_lines.append(line)
-
 
 
 
@@ -132,8 +131,8 @@ consecutive_pw_list2 = [
 def make_user_admin2():
     
     config_mode()
-    # crt.Screen.Send("username admin2 password admin\n")
-    crt.Screen.Send("username admin2 password \n")
+    crt.Screen.Send("username admin2 password admin\n")
+    #crt.Screen.Send("username admin2 password \n")
     time.sleep(1)
     crt.Screen.Send("Changeme1357!\r")
     time.sleep(0.5)
@@ -141,20 +140,19 @@ def make_user_admin2():
     time.sleep(0.5)
     crt.Screen.Send("end\n")
     time.sleep(0.5)
-    # crt.Screen.Send("show running-configuration |include admin2\n")
-    crt.Screen.Send("show running-config |include admin2\n")
+    crt.Screen.Send("show running-configuration |include admin2\n")
 
 def make_enable():
 
     time.sleep(1)
-    #crt.Screen.Send("enable admin2 password\n")
-    crt.Screen.Send("enable password\n")
+    crt.Screen.Send("enable admin2 password\n")
+    #crt.Screen.Send("enable password\n")
     time.sleep(1)
 
 
 def TEST1_PW_enable(pw_case):
 
-    #crt.Screen.Send(f"{test_name}_start\n")
+    crt.Screen.Send(f"{test_name}_start\n")
 
     time.sleep(1)
     config_mode()
@@ -169,32 +167,33 @@ def TEST1_PW_enable(pw_case):
     time.sleep(1)
     crt.Screen.Send("end\n")
     time.sleep(0.5)
-    # crt.Screen.Send("show running-configuration |include admin2\n")
-    crt.Screen.Send("show running-config |include enable password\n")
-    #crt.Screen.Send(f"{test_name}_end\n")
+    crt.Screen.Send("show running-configuration |include admin2\n")
+    #crt.Screen.Send("show running-config |include enable password\n")
+    
+    crt.Screen.Send(f"{test_name}_end\n")
     time.sleep(1)
 
 
 
 #make_user_admin2()
 
-# test_name = "TEST1_PW_combi_enable"
-#TEST1_PW_enable(combi_pw_list1)
-#pw_verify(4, "% Your password must contain a minimum of 9 characters included with at least")
+test_name = "TEST1_PW_combi_enable"
+TEST1_PW_enable(combi_pw_list1)
+pw_verify(4, "% Your password must contain a minimum of 9 characters included with at least")
 
-# test_name = "TEST1_PW_combi_enable"
-#TEST1_PW_enable(combi_pw_list2)
-#pw_verify(4, "% Your password must contain a minimum of 9 characters included with at least")
+test_name = "TEST1_PW_combi_enable"
+TEST1_PW_enable(combi_pw_list2)
+pw_verify(4, "% Your password must contain a minimum of 9 characters included with at least")
 
-# test_name = "TEST1_PW_repeated_enable"
-#TEST1_PW_enable(repeated_pw_list)
-# pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
+test_name = "TEST1_PW_repeated_enable"
+TEST1_PW_enable(repeated_pw_list)
+pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
 
-# test_name = "TEST1_PW_consecutive_enable"
-#TEST1_PW_enable(consecutive_pw_list1)
-# pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+test_name = "TEST1_PW_consecutive_enable"
+TEST1_PW_enable(consecutive_pw_list1)
+pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 
-# test_name = "TEST1_PW_consecutive_enable"
+test_name = "TEST1_PW_consecutive_enable"
 TEST1_PW_enable(consecutive_pw_list2)
-# pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 

@@ -1,8 +1,9 @@
 import time
 from openpyxl import load_workbook
 
-device = "HL7301"
-file_path = r"C:\Users\ehh74_0i1\OneDrive\바탕 화면\2025 업무\_2025.04.03_보안기능시험_자동화\securitytest_result.xlsx"
+
+device = "SWITCH"
+file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
 
 wb = load_workbook(file_path)
@@ -14,17 +15,6 @@ def get_next_row(sheet):
         if any(cell.value for cell in sheet[row]):
             return row +1
     return 1
-
-def start():
-    
-    crt.Session.Connect("/TELNET 172.25.17.73")
-
-    time.sleep(1)
-    crt.Screen.Send("admin\r")
-    time.sleep(1)
-    crt.Screen.Send("Changeme1357!\r")
-    crt.Screen.WaitForString("HL7301>")
-    crt.Screen.Send("enable\n")
 
 
 ###전체 line 읽기###
@@ -90,13 +80,6 @@ def pw_verify(judge_count, find_line):
     sheet2.cell(row=row2, column=3, value=final)
     
     wb.save(save_path)
-    
-###config mode 진입###
-def config_mode():
-
-    crt.Screen.Send("conf t\n")
-    crt.Screen.WaitForString(f"{device}(config)# ")
-
 
 ##########################################################################
 ###TEST1 : 1.2.1 비밀번호 보안성 기준###
@@ -136,16 +119,44 @@ consecutive_pw_list2 = [
         "KTC4321!#"
     ]
 
+username = "admin"
+priv = "admin"
+
+same_user = [username]
+
+
+
+def start():
+    
+    #HS5412 Telnet 불가로 잠시 주석처리중
+    #crt.Session.Connect("/TELNET 172.25.17.73")
+
+    time.sleep(1)
+    crt.Screen.Send("admin\r")
+    time.sleep(1)
+    crt.Screen.Send("Changeme1357!\r")
+    crt.Screen.WaitForString(f"{device}>")
+    crt.Screen.Send("enable\n")    
+
+    
+###config mode 진입###
+def config_mode():
+
+    crt.Screen.Send("conf t\n")
+    crt.Screen.WaitForString(f"{device}(config)# ")
+
+
 #username test 만들기
 def make_username():
     crt.Screen.Synchronous = True
 
     #crt.Screen.Send("username test privilege 3 password")
-    crt.Screen.Send("username admin2 password")
+    crt.Screen.Send(f"username {username} password {priv}")
     time.sleep(1)
     crt.Screen.Send("\r")
-    #crt.Screen.Send("username test password guest\r")
-    crt.Screen.WaitForString("Password")
+    #crt.Screen.WaitForString("Password")
+    ### HS5412 admin 계정 사용
+    crt.Screen.WaitForString("Enter admin account password")
     time.sleep(0.5)
 
     crt.Screen.Synchronous = False
@@ -153,7 +164,7 @@ def make_username():
 
 def TEST1_PW_user(pw_case):
     
-    #crt.Screen.Send(f"{test_name}_start\n")
+    crt.Screen.Send(f"{test_name}_start\n")
 
     time.sleep(1)
     config_mode()
@@ -170,35 +181,38 @@ def TEST1_PW_user(pw_case):
     crt.Screen.Send("end\n")
     time.sleep(0.5)
     #crt.Screen.Send("show running-config |include test\n")
-    crt.Screen.Send("show running-config |include admin2\n")
+    crt.Screen.Send(f"show running-config |include {username}\n")
+    time.sleep(1)
     crt.Screen.Send("\n")
-    crt.Screen.Send("show username\n")
-    #crt.Screen.Send(f"{test_name}_end\n")
+    #crt.Screen.Send("show username\n")
+    crt.Screen.Send(f"{test_name}_end\n")
     time.sleep(1)
 
 
 
-# crt.Screen.Synchronous = True
 
-#start()
-# test_name = "TEST1_PW_combi1_user"
-#TEST1_PW_user(combi_pw_list1)
-#pw_verify(4, "% Your password must contain a minimum of 9 characters")
+start()
 
-# test_name = "TEST1_PW_combi2_user"
-# TEST1_PW_user(combi_pw_list2)
-#pw_verify(4, "% Your password must contain a minimum of 9 characters")
+test_name = "TEST1_PW_combi1_user"
+TEST1_PW_user(combi_pw_list1)
+pw_verify(4, "% Your password must contain a minimum of 9 characters")
 
-# test_name = "TEST1_PW_repeated_user"
-# TEST1_PW_user(repeated_pw_list)
-# pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
+test_name = "TEST1_PW_combi2_user"
+TEST1_PW_user(combi_pw_list2) 
+pw_verify(4, "% Your password must contain a minimum of 9 characters")
 
-# test_name = "TEST1_PW_consecutive_user1"
-# TEST1_PW_user(consecutive_pw_list1)
-# pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+test_name = "TEST1_PW_repeated_user"
+TEST1_PW_user(repeated_pw_list)
+pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
 
-#test_name = "TEST1_PW_consecutive_user2"
+test_name = "TEST1_PW_consecutive_user1"
+TEST1_PW_user(consecutive_pw_list1)
+pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+
+test_name = "TEST1_PW_consecutive_user2"
 TEST1_PW_user(consecutive_pw_list2)
-# pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 
-# crt.Screen.Synchronous = True
+test_name = "TEST1_PW_same_user"
+TEST1_PW_user(same_user)
+pw_verify(1, "% Passwords should not have contain a user name.")

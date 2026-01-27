@@ -5,8 +5,8 @@ import mss
 import os
 from openpyxl import load_workbook
 
-device = "HL7301"
-file_path = r"C:\Users\ehh74_0i1\OneDrive\바탕 화면\2025 업무\_2025.04.03_보안기능시험_자동화\securitytest_result.xlsx"
+device = "SWITCH"
+file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
 
 wb = load_workbook(file_path)
@@ -163,10 +163,10 @@ def TEST1_PW_combi(TEST1_PW_combi, test_pw):
     make_admin()
 
     for pw in test_pw:
+        time.sleep(2)
         crt.Screen.Send(f"{pw}\r")
         crt.Screen.WaitForString("Enter admin account password : ")
 
-    
     time.sleep(1)
     #crt.Screen.Send(f"{TEST1_PW_combi}_end\n")
 
@@ -176,19 +176,19 @@ time.sleep(1)
 crt.Screen.Send("\r")
 
 TEST1_PW_combi("TEST1_PW_combi_init", pw_list_combi)
-#pw_verify("TEST1_PW_combi_init", 8, "% Your password must contain a minimum of 9 characters included with at least") 
+pw_verify("TEST1_PW_combi_init", 9, "% Your password must contain a minimum of 9 characters included with at least") 
 time.sleep(1)
 crt.Screen.Send("\r")
 
 TEST1_PW_combi("TEST1_PW_repeated_init", repeated_pw_list)
-# pw_verify("TEST1_PW_repeated_init", 4, "% Passwords should not have the same characters or numbers in succession.")
+pw_verify("TEST1_PW_repeated_init", 4, "% Passwords should not have the same characters or numbers in succession.")
 time.sleep(1)
 crt.Screen.Send("\r")
 
 TEST1_PW_combi("TEST1_PW_consecutive_init", consecutive_pw_list)
-# pw_verify("TEST1_PW_consecutive_init", 6, "% Passwords should not have the consecutive characters or numbers in succession.")
+pw_verify("TEST1_PW_consecutive_init", 6, "% Passwords should not have the consecutive characters or numbers in succession.")
 time.sleep(1)
 crt.Screen.Send("\r")
-#make_admin()
+
 
 
