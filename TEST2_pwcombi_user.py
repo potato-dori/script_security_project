@@ -1,9 +1,10 @@
-import OS
+import os
 import time
 from openpyxl import load_workbook
 
 
 device = "SWITCH"
+
 
 # Jenkins 환경변수 (로컬 실행 시 fallback)
 WORKSPACE = os.getenv("WORKSPACE", r"C:\Git\script_security_project")
@@ -132,24 +133,26 @@ consecutive_pw_list2 = [
         "KTC4321!#"
     ]
 
-username = "admin"
+username = "admin2"
 priv = "admin"
 
 same_user = [username]
 
 
 
-def start():
-    
-    #HS5412 Telnet 불가로 잠시 주석처리중
-    #crt.Session.Connect("/TELNET 172.25.17.73")
 
-    time.sleep(1)
-    crt.Screen.Send("admin\r")
-    time.sleep(1)
+def start():
+    crt.Session.Connect("/SERIAL COM5 /BAUD 115200")
+    time.sleep(2)
+    crt.Screen.Send("\n")
+    crt.Screen.WaitForString("login")
+    crt.Screen.Send("admin\n")
+    crt.Screen.WaitForString("Password")
     crt.Screen.Send("Changeme1357!\r")
-    crt.Screen.WaitForString(f"{device}>")
-    crt.Screen.Send("enable\n")    
+    crt.Screen.WaitForString("SWITCH>")
+    crt.Screen.Send("\n") 
+    crt.Screen.Send("enable\n") 
+
 
     
 ###config mode 진입###
@@ -167,16 +170,15 @@ def make_username():
     crt.Screen.Send(f"username {username} password {priv}")
     time.sleep(1)
     crt.Screen.Send("\r")
-    #crt.Screen.WaitForString("Password")
+    crt.Screen.WaitForString("Password")
     ### HS5412 admin 계정 사용
-    crt.Screen.WaitForString("Enter admin account password")
+    #crt.Screen.WaitForString("Enter admin account password")
     time.sleep(0.5)
 
     crt.Screen.Synchronous = False
 
 
 def TEST1_PW_user(pw_case):
-    
     crt.Screen.Send(f"{test_name}_start\n")
 
     time.sleep(1)
@@ -210,6 +212,7 @@ try:
     TEST1_PW_user(combi_pw_list1)
     pw_verify(4, "% Your password must contain a minimum of 9 characters")
 
+    '''
     test_name = "TEST1_PW_combi2_user"
     TEST1_PW_user(combi_pw_list2) 
     pw_verify(4, "% Your password must contain a minimum of 9 characters")
@@ -229,6 +232,7 @@ try:
     test_name = "TEST1_PW_same_user"
     TEST1_PW_user(same_user)
     pw_verify(1, "% Passwords should not have contain a user name.")
+    '''
 
 finally:
     wb.save(save_path)

@@ -103,3 +103,19 @@ def config_mode():
     crt.Screen.WaitForString(f"{device}(config)# ")
 
     crt.Screen.Synchronous = False
+
+
+
+#Console, Telnet, SSH 접속
+def start(protocol, ip, username, password):
+    if protocol == "Console":
+        crt.Session.Connect("/SERIAL COM6 /BAUD 115200")
+        time.sleep(2)
+        crt.Screen.Send("\n")
+        crt.Screen.WaitForString("Username")
+
+    elif protocol == "Telnet":
+        crt.Session.Connect(f"/TELNET {ip}")
+
+    if protocol == "SSH":
+        crt.Session.Connect(f"/SSH2 {username}@{ip} /PASSWORD {password}")
