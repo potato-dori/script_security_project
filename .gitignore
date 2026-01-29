@@ -1,2 +1,6 @@
-RESULT/
-*.xlsx
+#Jenkins 산출물(결과) - 커밋 금지
+RESULT/securitytest_result_*.xlsx
+RESULT/logs/
+
+#템플핏은 커밋 대상
+!RESULT/securitytest_template.xlsx
