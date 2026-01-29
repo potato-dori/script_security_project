@@ -1,12 +1,26 @@
+import OS
 import time
 from openpyxl import load_workbook
 
 
 device = "SWITCH"
-file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
-save_path = file_path
 
-wb = load_workbook(file_path)
+# Jenkins 환경변수 (로컬 실행 시 fallback)
+WORKSPACE = os.getenv("WORKSPACE", r"C:\Git\script_security_project")
+BUILD_NO  = os.getenv("BUILD_NUMBER", "local")
+
+result_dir = os.path.join(WORKSPACE, "RESULT")
+os.makedirs(result_dir, exist_ok=True)
+
+# 템플릿(커밋된 파일)
+template_path = os.path.join(result_dir, "securitytest_template.xlsx")
+if not os.path.exists(template_path):
+    raise FileNotFoundError(f"Template not found: {template_path}")
+
+# 산출물(빌드별 결과 파일)
+save_path = os.path.join(result_dir, f"securitytest_result_{BUILD_NO}.xlsx")
+
+wb = load_workbook(template_path)
 sheet1 = wb["RESULT"]
 sheet2 = wb["LOG"]
 
@@ -79,7 +93,6 @@ def pw_verify(judge_count, find_line):
     sheet2.cell(row=row2, column=2, value=test_name)
     sheet2.cell(row=row2, column=3, value=final)
     
-    wb.save(save_path)
 
 ##########################################################################
 ###TEST1 : 1.2.1 비밀번호 보안성 기준###
@@ -190,29 +203,32 @@ def TEST1_PW_user(pw_case):
 
 
 
+try:
+    start()
 
-start()
+    test_name = "TEST1_PW_combi1_user"
+    TEST1_PW_user(combi_pw_list1)
+    pw_verify(4, "% Your password must contain a minimum of 9 characters")
 
-test_name = "TEST1_PW_combi1_user"
-TEST1_PW_user(combi_pw_list1)
-pw_verify(4, "% Your password must contain a minimum of 9 characters")
+    test_name = "TEST1_PW_combi2_user"
+    TEST1_PW_user(combi_pw_list2) 
+    pw_verify(4, "% Your password must contain a minimum of 9 characters")
 
-test_name = "TEST1_PW_combi2_user"
-TEST1_PW_user(combi_pw_list2) 
-pw_verify(4, "% Your password must contain a minimum of 9 characters")
+    test_name = "TEST1_PW_repeated_user"
+    TEST1_PW_user(repeated_pw_list)
+    pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
 
-test_name = "TEST1_PW_repeated_user"
-TEST1_PW_user(repeated_pw_list)
-pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
+    test_name = "TEST1_PW_consecutive_user1"
+    TEST1_PW_user(consecutive_pw_list1)
+    pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 
-test_name = "TEST1_PW_consecutive_user1"
-TEST1_PW_user(consecutive_pw_list1)
-pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+    test_name = "TEST1_PW_consecutive_user2"
+    TEST1_PW_user(consecutive_pw_list2)
+    pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 
-test_name = "TEST1_PW_consecutive_user2"
-TEST1_PW_user(consecutive_pw_list2)
-pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
+    test_name = "TEST1_PW_same_user"
+    TEST1_PW_user(same_user)
+    pw_verify(1, "% Passwords should not have contain a user name.")
 
-test_name = "TEST1_PW_same_user"
-TEST1_PW_user(same_user)
-pw_verify(1, "% Passwords should not have contain a user name.")
+finally:
+    wb.save(save_path)
