@@ -1,10 +1,12 @@
 import time
 from openpyxl import load_workbook
+import subprocess
+import re
 
 
-device = "HL7301"
+device = "SWITCH"
 
-file_path = r"C:\Users\ehh74_0i1\Desktop\한은희 백업\2025 업무\_2025.04.03_보안기능시험_자동화\securitytest_result.xlsx"
+file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
 
 wb = load_workbook(file_path)
@@ -19,6 +21,24 @@ def get_next_row(sheet):
 
 
 
+
+def start(protocol, ip, username, password):
+    if protocol == "Console":
+        crt.Session.Connect("/SERIAL COM5 /BAUD 115200")
+        time.sleep(2)
+        crt.Screen.Send("\n")
+        crt.Screen.WaitForString("login")
+
+    elif protocol == "Telnet":
+        crt.Session.Connect(f"/TELNET {ip}")
+
+    elif protocol == "SSH":
+        #crt.Session.Connect(f"/SSH2 {username}@{ip} /PASSWORD {password}")
+        #crt.Session.Connect(f'/SSH2 /L {username} /PASSWORD {password} {ip}')
+        
+
+
+
 def login_fail(protocol, username, wrong_password):
     if protocol == "Console" or "Telnet":
         for i in range(2):
@@ -26,7 +46,7 @@ def login_fail(protocol, username, wrong_password):
             crt.Screen.Send(f"{username}\r")
             time.sleep(1)
             crt.Screen.Send(f"{wrong_password}\r")
-            crt.Screen.WaitForString("Username")
+            crt.Screen.WaitForString("login")
 
     elif protocol == "SSH":
         for i in range(2):
@@ -41,21 +61,6 @@ def login_success(protocol, username, right_password):
 
     crt.Screen.Send(f"{right_password}\r")
     crt.Screen.WaitForString(f"{device}>")
-
-
-def start(protocol, ip, username, password):
-    if protocol == "Console":
-        crt.Session.Connect("/SERIAL COM6 /BAUD 115200")
-        time.sleep(2)
-        crt.Screen.Send("\n")
-        crt.Screen.WaitForString("Username")
-
-    elif protocol == "Telnet":
-        crt.Session.Connect(f"/TELNET {ip}")
-
-    if protocol == "SSH":
-        crt.Session.Connect(f"/SSH2 {username}@{ip} /PASSWORD {password}")
-
 
 
 
@@ -119,32 +124,32 @@ def judge(judge_line):
 
     
 
-#test_name = "TEST5_noAuthFailureReason_Console"
-#start("Console", "192.168.73.2", "admin", "changeme@!")
-#login_fail("Console", "admin", "Changeme1357!!")
-#read_all()
-#time.sleep(3)
-#judge("Username: admin")
-#time.sleep(3)
-#login_success("Console", "admin", "Changeme1357!")
+# test_name = "TEST5_noAuthFailureReason_Console"
+# start("Console", "10.100.41.48", "admin", "changeme@!")
+# login_fail("Console", "admin2", "Changeme1357!!")
+# read_all()
+# time.sleep(3)
+# judge("Login incorrect")
+# time.sleep(3)
+# login_success("Console", "admin", "Changeme1357!")
 
-#test_name = "TEST5_noAuthFailureReason_Telnet"
-start("Telnet", "172.25.44.24", "admin", "changeme@!")
-#login_fail("Telnet", "admin", "Changeme1357!!")
-#read_all()
-#time.sleep(3)
-#judge("Username: admin")
-#time.sleep(3)
-#login_success("Telnet", "admin", "Changeme1357!")
+# test_name = "TEST5_noAuthFailureReason_Telnet"
+# start("Telnet", "10.100.41.48", "admin", "Changeme1357!")
+# login_fail("Telnet", "admin2", "Changeme1357!!")
+# read_all()
+# time.sleep(3)
+# judge("Login incorrect")
+# time.sleep(3)
+# login_success("Telnet", "admin", "Changeme1357!")
 
-#test_name = "TEST5_noAuthFailureReason_SSH"
-#start("SSH", "192.168.73.2", "admin", "Changeme1357!!")
-#login_fail("SSH", "admin", "Changeme1357!!")
-#read_all()
-#time.sleep(3)
-#judge("Password:")
-#time.sleep(3)
-#login_success("SSH", "admin", "Changeme1357!")
+test_name = "TEST5_noAuthFailureReason_SSH"
+start("SSH", "10.100.41.48", "user3", "Changeme1357!!")
+login_fail("SSH", "user3", "Changeme1357!!")
+read_all()
+time.sleep(3)
+judge("Password:")
+time.sleep(3)
+login_success("SSH", "admin", "Changeme1357!")
 
 
 

@@ -2,9 +2,23 @@ import time
 from openpyxl import load_workbook
 
 
-device = "SWITCH"
+# 결과 파일
 file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
+
+# 장비 정보
+device = "SWITCH"
+console = "/SERIAL COM6 /BAUD 115200"
+ip = "192.168.100.22"
+
+
+username = "admin"
+privilege = "admin"
+same_user = [username]
+
+
+
+###################################코드 시작
 
 wb = load_workbook(file_path)
 sheet1 = wb["RESULT"]
@@ -119,22 +133,15 @@ consecutive_pw_list2 = [
         "KTC4321!#"
     ]
 
-username = "admin"
-priv = "admin"
-
-same_user = [username]
-
-
 
 def start():
-    
-    #HS5412 Telnet 불가로 잠시 주석처리중
-    #crt.Session.Connect("/TELNET 172.25.17.73")
 
+    crt.Session.Connect(console)
     time.sleep(1)
-    crt.Screen.Send("admin\r")
+    crt.Screen.Send("\n")
+    crt.Screen.Send("admin\n")
     time.sleep(1)
-    crt.Screen.Send("Changeme1357!\r")
+    crt.Screen.Send("Changeme1357!\n")
     crt.Screen.WaitForString(f"{device}>")
     crt.Screen.Send("enable\n")    
 
@@ -151,7 +158,7 @@ def make_username():
     crt.Screen.Synchronous = True
 
     #crt.Screen.Send("username test privilege 3 password")
-    crt.Screen.Send(f"username {username} password {priv}")
+    crt.Screen.Send(f"username {username} password {privilege}")
     time.sleep(1)
     crt.Screen.Send("\r")
     #crt.Screen.WaitForString("Password")
@@ -193,11 +200,11 @@ def TEST1_PW_user(pw_case):
 
 start()
 
-test_name = "TEST1_PW_combi1_user"
+test_name = "TEST1_PW_combi_user1"
 TEST1_PW_user(combi_pw_list1)
 pw_verify(4, "% Your password must contain a minimum of 9 characters")
 
-test_name = "TEST1_PW_combi2_user"
+test_name = "TEST1_PW_combi_user2"
 TEST1_PW_user(combi_pw_list2) 
 pw_verify(4, "% Your password must contain a minimum of 9 characters")
 

@@ -1,13 +1,21 @@
 
+#python 313
+### This script is based on equipment of REALTAK Chipset ###  
+
 import time
 import re
 import mss
 import os
 from openpyxl import load_workbook
 
-device = "SWITCH"
+# 결과 파일
 file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
+
+# 장비 정보
+device = "SWITCH"
+console = "/SERIAL COM6 /BAUD 115200"
+ip = "192.168.54.12"
 
 wb = load_workbook(file_path)
 sheet1 = wb["RESULT"]
@@ -39,7 +47,6 @@ def read_all():
     crt.Screen.Synchronous = False
 
 
-
 ###시험부분 line만 추출###
 def select(all_lines, TEST_start, TEST_end):
     crt.Screen.Synchronous = True
@@ -61,7 +68,6 @@ def select(all_lines, TEST_start, TEST_end):
 
     crt.Screen.Synchronous = False
     return final
-
 
 
 ###판단 부분###
@@ -104,14 +110,12 @@ def pw_verify(TEST_name, judge_count, find_line):
 
 
 
-###config mode 진입###
-def config_mode():
-    crt.Screen.Synchronous = True
 
-    crt.Screen.Send("conf t\n")
-    crt.Screen.WaitForString(f"{device}(config)# ")
 
-    crt.Screen.Synchronous = False
+def start():
+    global console
+    crt.Session.Connect(console)
+    time.sleep(2)
 
 
 
@@ -158,7 +162,7 @@ def make_admin():
 def TEST1_PW_combi(TEST1_PW_combi, test_pw):
     crt.Screen.Synchronous = True
 
-    #crt.Screen.Send(f"{TEST1_PW_combi}_start\n")
+    crt.Screen.Send(f"{TEST1_PW_combi}_start\n")
 
     make_admin()
 
@@ -168,17 +172,22 @@ def TEST1_PW_combi(TEST1_PW_combi, test_pw):
         crt.Screen.WaitForString("Enter admin account password : ")
 
     time.sleep(1)
-    #crt.Screen.Send(f"{TEST1_PW_combi}_end\n")
+    crt.Screen.Send(f"{TEST1_PW_combi}_end\n")
 
     crt.Screen.Synchronous = False
 
+
+
+
+start()
+
+time.sleep(1)
+
+TEST1_PW_combi("TEST1_PW_combi_init", pw_list_combi)
+pw_verify("TEST1_PW_combi_init", 8, "% Your password must contain a minimum of 9 characters included with at least") 
 time.sleep(1)
 crt.Screen.Send("\r")
 
-TEST1_PW_combi("TEST1_PW_combi_init", pw_list_combi)
-pw_verify("TEST1_PW_combi_init", 9, "% Your password must contain a minimum of 9 characters included with at least") 
-time.sleep(1)
-crt.Screen.Send("\r")
 
 TEST1_PW_combi("TEST1_PW_repeated_init", repeated_pw_list)
 pw_verify("TEST1_PW_repeated_init", 4, "% Passwords should not have the same characters or numbers in succession.")

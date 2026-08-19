@@ -18,7 +18,7 @@ username_admin2 = "admin2"
 username_user = "user"
 
 # 모든 시험용 비밀번호
-test_password = "Changeme1357#"
+test_password = "Changeme1357##"
 
 
 ###################################
@@ -144,6 +144,24 @@ def start():
 
     crt.Screen.Send("enable\n")
     crt.Screen.WaitForString(f"{device}#")
+
+
+###################################
+# 장비 접속 종료
+###################################
+
+def disconnect():
+
+    time.sleep(1)
+
+    # 장비 로그인 종료
+    crt.Screen.Send("exit\n")
+    crt.Screen.WaitForString("login")
+
+    time.sleep(1)
+
+    # Console 연결 종료
+    crt.Session.Disconnect()
 
 
 ###################################
@@ -332,3 +350,10 @@ password_mask_verify()
 test_name = "TEST6_PW_mask_user_login"
 TEST6_user_login()
 password_mask_verify()
+
+
+##################################################
+# 장비 접속 종료
+##################################################
+
+disconnect()

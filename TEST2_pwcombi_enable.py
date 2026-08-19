@@ -1,12 +1,23 @@
+
+### python 3.13.2
+### This script is based on equipment of REALTAK Chipset ###  
+
 import time
 import re
 import mss
 import os
 from openpyxl import load_workbook
 
-device = "SWITCH"
+
+# 결과 파일
 file_path = r"C:\Git\script_security_project\RESULT\securitytest_result.xlsx"
 save_path = file_path
+
+# 장비 정보
+device = "SWITCH"
+console = "/SERIAL COM6 /BAUD 115200"
+ip = "192.168.100.22"
+
 
 wb = load_workbook(file_path)
 sheet1 = wb["RESULT"]
@@ -84,6 +95,20 @@ def pw_verify(judge_count, find_line):
     sheet2.cell(row=row2, column=3, value=final)
     
     wb.save(save_path)
+
+###장비 접속###
+def start():
+    crt.Session.Connect(console)
+    time.sleep(2)
+    crt.Screen.Send("\n")
+    crt.Screen.WaitForString("login")
+    crt.Screen.Send("admin\n")
+    crt.Screen.WaitForString("Password")
+    crt.Screen.Send("Changeme1357!\r")
+    crt.Screen.WaitForString(f"{device}>")
+    crt.Screen.Send("\n")
+    crt.Screen.Send("enable\n")
+    time.sleep(1)
     
 ###config mode 진입###
 def config_mode():
@@ -174,14 +199,14 @@ def TEST1_PW_enable(pw_case):
     time.sleep(1)
 
 
+start()
+make_user_admin2()
 
-#make_user_admin2()
-
-test_name = "TEST1_PW_combi_enable"
+test_name = "TEST1_PW_combi_enable1"
 TEST1_PW_enable(combi_pw_list1)
 pw_verify(4, "% Your password must contain a minimum of 9 characters included with at least")
 
-test_name = "TEST1_PW_combi_enable"
+test_name = "TEST1_PW_combi_enable2"
 TEST1_PW_enable(combi_pw_list2)
 pw_verify(4, "% Your password must contain a minimum of 9 characters included with at least")
 
@@ -189,11 +214,11 @@ test_name = "TEST1_PW_repeated_enable"
 TEST1_PW_enable(repeated_pw_list)
 pw_verify(4, "% Passwords should not have the same characters or numbers in succession.")
 
-test_name = "TEST1_PW_consecutive_enable"
+test_name = "TEST1_PW_consecutive_enable1"
 TEST1_PW_enable(consecutive_pw_list1)
 pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 
-test_name = "TEST1_PW_consecutive_enable"
+test_name = "TEST1_PW_consecutive_enable2"
 TEST1_PW_enable(consecutive_pw_list2)
 pw_verify(3, "% Passwords should not have the consecutive characters or numbers in succession.")
 
