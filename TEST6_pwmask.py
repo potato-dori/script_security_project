@@ -18,7 +18,7 @@ username_admin2 = "admin2"
 username_user = "user"
 
 # 모든 시험용 비밀번호
-test_password = "Changeme1357##"
+test_password = "Changeme1357#"
 
 
 ###################################
@@ -124,14 +124,18 @@ def password_mask_verify():
 
 
 ###################################
+# console 접속
+###################################
+
+def connetc_console():
+    crt.Session.Connect(console)
+    time.sleep(2)
+
+###################################
 # 장비 접속
 ###################################
 
 def start():
-
-    crt.Session.Connect(console)
-
-    time.sleep(2)
 
     crt.Screen.Send("\n")
     crt.Screen.WaitForString("login")
@@ -154,9 +158,13 @@ def disconnect():
 
     time.sleep(1)
 
-    # 장비 로그인 종료
+    # admin2 계정 삭제
+    start()
+    config_mode()
+    crt.Screen.Send(f"no username {username_admin2}\n")
+    crt.Screen.Send(f"no username {username_user}\n")
+    crt.Screen.Send("end\n")
     crt.Screen.Send("exit\n")
-    crt.Screen.WaitForString("login")
 
     time.sleep(1)
 
@@ -299,6 +307,7 @@ def TEST6_user_login():
     crt.Screen.WaitForString(f"{device}>")
 
     crt.Screen.Send(f"{test_name}_end\n")
+    crt.Screen.Send("exit\n")
     time.sleep(1)
 
 
@@ -306,6 +315,7 @@ def TEST6_user_login():
 # 실행
 ##########################################################################
 
+connetc_console()
 start()
 
 ##################################################
