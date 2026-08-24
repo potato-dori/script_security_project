@@ -259,6 +259,9 @@ def clear_snmp():
     crt.Screen.Send("snmp disable\n")
     crt.Screen.WaitForString(f"{device}(config)#")
 
+    crt.Screen.Send("end\n")
+    crt.Screen.WaitForString(f"{device}#")
+
 
 ##########################################################################
 # Console 종료
@@ -291,3 +294,17 @@ test_name = "TEST8_SNMPkey_verify"
 
 TEST8_SNMP_secret()
 TEST8_SNMP_verify()
+
+
+##################################################
+# SNMP 설정 삭제
+##################################################
+
+clear_snmp()
+
+
+##################################################
+# 장비 로그아웃 및 Console 연결 종료
+##################################################
+
+disconnect()
