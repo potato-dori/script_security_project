@@ -1,3 +1,14 @@
 RESULT/
 *.xlsx
 snippets_private.py
+
+
+# VS Code 설정
+.vscode/
+
+# 임시 테스트 파일
+TEST_open_sftpserver.py
+ScreenCapture, AllLineRead, SelectLine, PartJudge.py
+
+# 외부 실행 파일
+plink.exe
