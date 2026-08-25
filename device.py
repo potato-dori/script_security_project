@@ -471,6 +471,16 @@ def disconnect_console(crt):
     crt.Session.Disconnect()
 
 
+###################################
+# 로그아웃 + Console 종료
+###################################
+
+def close(crt):
+
+    logout(crt)
+    disconnect_console(crt)
+
+
 
 ##<ping 확인, ssh, telnet, snmp enable, disable 확인을 위한 코드>
 ###################################
