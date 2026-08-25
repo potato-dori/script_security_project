@@ -108,6 +108,28 @@ def TEST2_PW_combi(test_pw, find_line):
 
 
 ##########################################################################
+# 최초 관리자 admin 계정 생성
+##########################################################################
+
+def make_init_admin():
+
+    make_admin()
+
+    crt.Screen.Send(device.password_admin)
+    time.sleep(0.5)
+    crt.Screen.Send("\r")
+
+    crt.Screen.WaitForString("Please enter it again")
+
+    crt.Screen.Send(device.password_admin)
+    time.sleep(0.5)
+    crt.Screen.Send("\r")
+
+    crt.Screen.WaitForString("SWITCH login:")
+    crt.Screen.Send("\n")
+
+
+##########################################################################
 # 판정
 ##########################################################################
 
@@ -130,6 +152,8 @@ def pw_verify(test_name, expected_count, actual_count, final):
         judge_value,
         final
     )
+
+
 
 
 
@@ -203,5 +227,18 @@ time.sleep(1)
 
 crt.Screen.Send("\r")
 
+
+##########################################################################
+# 초기 admin 계정 생성
+##########################################################################
+
+make_init_admin()
+
+
+##########################################################################
+# Console 종료
+##########################################################################
+
+device.disconnect_console(crt)
 
 
